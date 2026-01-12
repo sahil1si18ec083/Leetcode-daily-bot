@@ -29,6 +29,10 @@ func (t *TwilioSender) Send(body string) error {
 	params.SetBody(body)
 
 	_, err := client.Api.CreateMessage(params)
+	// fmt.Println("Twilio SID:", *resp.Sid)
+	// fmt.Println("Twilio Status:", *resp.Status)
+	// fmt.Println("Twilio Error Code:", resp.ErrorCode)
+	// fmt.Println("Twilio Error Message:", resp.ErrorMessage)
 
 	return err
 
