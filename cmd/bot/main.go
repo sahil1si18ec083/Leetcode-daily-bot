@@ -1,6 +1,8 @@
 package main
 
 import (
+	"leetcode-daily-bot/internal/ai"
+	"leetcode-daily-bot/internal/leetcode"
 	"leetcode-daily-bot/internal/sms"
 	"log"
 	"os"
@@ -17,6 +19,12 @@ func main() {
 		fmt.Println(err)
 		log.Fatal("Error loading .env file")
 	}
+	res, err := leetcode.FetchDaily()
+	if err != nil {
+		log.Fatal("Error while generating Daily Problem")
+	}
+
+	aiResponse := ai.GenerateExplanation(res.Difficulty, res.ID, res.Title, res.URL, res.Content)
 	message := "test message"
 
 	mode := os.Getenv("SMS_MODE")
