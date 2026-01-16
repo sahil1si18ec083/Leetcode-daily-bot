@@ -2,8 +2,7 @@ name: LeetCode Daily Bot (Go)
 
 on:
   schedule:
-    - cron: '0 0 * * *'
-# 5:30 AM IST
+    - cron: '0 0 * * *'   # 5:30 AM IST (UTC)
   workflow_dispatch:
 
 jobs:
@@ -30,6 +29,4 @@ jobs:
           ToTwilioNumber: ${{ secrets.ToTwilioNumber }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           SMS_MODE: real
-        run: |
-          cd cmd/bot
-          go run .
+        run: go run ./cmd/bot
