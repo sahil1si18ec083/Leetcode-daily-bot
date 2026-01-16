@@ -15,10 +15,10 @@ import (
 
 func main() {
 	var err error
-	err = godotenv.Load()
-	if err != nil {
 
-		log.Fatal("Error loading .env file")
+	if err = godotenv.Load(); err != nil {
+
+		fmt.Println("Error loading .env file")
 	}
 	res, err := leetcode.FetchDaily()
 	if err != nil {
