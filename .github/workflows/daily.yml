@@ -1,0 +1,35 @@
+name: LeetCode Daily Bot (Go)
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+# 5:30 AM IST
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Download deps
+        run: go mod download
+
+      - name: Run bot
+        env:
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          FromTwilioNumber: ${{ secrets.FromTwilioNumber }}
+          ToTwilioNumber: ${{ secrets.ToTwilioNumber }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SMS_MODE: real
+        run: |
+          cd cmd/bot
+          go run .
