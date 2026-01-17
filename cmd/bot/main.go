@@ -32,7 +32,7 @@ func main() {
 	sms_mode := os.Getenv("SMS_MODE")
 	wapp_mode := os.Getenv("WAPP_MODE")
 	if sms_mode == "" || wapp_mode == "" {
-		log.Fatal("error while reading .env")
+		fmt.Println("error while reading .env")
 	}
 	fmt.Println(sms_mode)
 
