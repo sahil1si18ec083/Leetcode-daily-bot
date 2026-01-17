@@ -2,7 +2,7 @@ name: LeetCode Daily Bot (Go)
 
 on:
   schedule:
-    - cron: '1 0 * * *'   # 5:31 AM IST (UTC)
+    - cron: '*/5 * * * *'   # 5:31 AM IST (UTC)
   workflow_dispatch:
 
 jobs:

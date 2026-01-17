@@ -1,4 +1,4 @@
-package sms
+package notify
 
 type Sender interface {
 	Send(body string) error
