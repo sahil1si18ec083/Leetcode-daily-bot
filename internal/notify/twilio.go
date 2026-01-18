@@ -1,7 +1,7 @@
 package notify
 
 import (
-	"fmt"
+	"errors"
 	"os"
 
 	"github.com/twilio/twilio-go"
@@ -11,11 +11,12 @@ import (
 type TwilioSender struct {
 }
 
-func (t *TwilioSender) Send(body string) error {
+func (t *TwilioSender) Send(body string, errchan chan error) {
 	from := os.Getenv("FromTwilioNumber")
 	to := os.Getenv("ToTwilioNumber")
 	if from == "" || to == "" {
-		return fmt.Errorf("Twilio numbers not set in env")
+		errchan <- errors.New("Twilio numbers not set in env")
+		return
 	}
 
 	client := twilio.NewRestClientWithParams(twilio.ClientParams{
@@ -29,11 +30,12 @@ func (t *TwilioSender) Send(body string) error {
 	params.SetBody(body)
 
 	_, err := client.Api.CreateMessage(params)
+	if err != nil {
+		errchan <- err
+	}
 	// fmt.Println("Twilio SID:", *resp.Sid)
 	// fmt.Println("Twilio Status:", *resp.Status)
 	// fmt.Println("Twilio Error Code:", resp.ErrorCode)
 	// fmt.Println("Twilio Error Message:", resp.ErrorMessage)
-
-	return err
 
 }

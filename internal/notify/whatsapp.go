@@ -1,6 +1,7 @@
 package notify
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -11,11 +12,12 @@ import (
 type WhatsAppSender struct {
 }
 
-func (w *WhatsAppSender) Send(body string) error {
+func (w *WhatsAppSender) Send(body string, errchan chan error) {
 	from := os.Getenv("From_Wapp_TwilioNumber")
 	to := os.Getenv("To_Wapp_TwilioNumber")
 	if from == "" || to == "" {
-		return fmt.Errorf("Twilio numbers not set in env")
+		errchan <- errors.New("Twilio numbers not set in env")
+		return
 	}
 
 	client := twilio.NewRestClientWithParams(twilio.ClientParams{
@@ -31,7 +33,9 @@ func (w *WhatsAppSender) Send(body string) error {
 	fmt.Println(from, to, body)
 
 	_, err := client.Api.CreateMessage(params)
+	if err != nil {
+		errchan <- err
 
-	return err
+	}
 
 }

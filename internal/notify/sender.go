@@ -1,10 +1,10 @@
 package notify
 
 type Sender interface {
-	Send(body string) error
+	Send(body string, errchan chan error)
 }
 
-func SendMessage(S Sender, body string) error {
-	return S.Send(body)
+func SendMessage(S Sender, body string, errchan chan error) {
+	S.Send(body, errchan)
 
 }

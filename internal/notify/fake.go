@@ -5,8 +5,7 @@ import "fmt"
 type FakeSender struct {
 }
 
-func (f *FakeSender) Send(body string) error {
+func (f *FakeSender) Send(body string, errchan chan error) {
 	fmt.Println("fake sending", body)
-	return nil
 
 }

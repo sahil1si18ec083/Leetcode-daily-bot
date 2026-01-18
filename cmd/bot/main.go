@@ -7,6 +7,7 @@ import (
 	"leetcode-daily-bot/internal/notify"
 	"log"
 	"os"
+	"sync"
 
 	"fmt"
 
@@ -14,7 +15,11 @@ import (
 )
 
 func main() {
+	errchan := make(chan error, 2)
+
 	var err error
+	var wg sync.WaitGroup
+	wg.Add(2)
 
 	if err = godotenv.Load(); err != nil {
 
@@ -35,20 +40,30 @@ func main() {
 		fmt.Println("error while reading .env")
 	}
 	fmt.Println(sms_mode)
+	go func() {
+		defer wg.Done()
+		if sms_mode == "fake" {
+			notify.SendMessage(&notify.FakeSender{}, message, errchan)
+		} else {
+			notify.SendMessage(&notify.TwilioSender{}, message, errchan)
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		if wapp_mode == "fake" {
+			notify.SendMessage(&notify.FakeSender{}, message, errchan)
+		} else {
+			notify.SendMessage(&notify.WhatsAppSender{}, message, errchan)
+		}
 
-	if sms_mode == "fake" {
-		err = notify.SendMessage(&notify.FakeSender{}, message)
-	} else {
-		err = notify.SendMessage(&notify.TwilioSender{}, message)
-	}
-	if wapp_mode == "fake" {
-		err = notify.SendMessage(&notify.FakeSender{}, message)
-	} else {
-		err = notify.SendMessage(&notify.WhatsAppSender{}, message)
-	}
-	if err != nil {
-		fmt.Println(err)
-		fmt.Println("error while sending message")
+	}()
+	wg.Wait()
+	close(errchan)
+	for err := range errchan {
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("error while sending message")
+		}
 	}
 
 }
